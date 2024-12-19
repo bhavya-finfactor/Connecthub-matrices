@@ -1,6 +1,8 @@
 package com.ftpl.finfactor.reporting.dao;
 
+import com.ftpl.finfactor.reporting.Model.LAPSDataCount;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,14 +20,14 @@ public class MonthlyLAPSDataDAO {
     @Autowired
     private DAOManager daoManager;
 
-    public List<Map<String, Object>> fetchFinsenseRequestStatusCount(LocalDate startDate, LocalDate endDate) {
+    public List<LAPSDataCount> fetchFinsenseStatusCount(LocalDate startDate, LocalDate endDate) {
         ResultSet resultSet = null;
         PreparedStatement stmt = null;
         Connection con = null;
-        List<Map<String, Object>> resultList = new ArrayList<>();
+        List<LAPSDataCount> resultList = new ArrayList<>();
 
         try {
-            stmt = daoManager.getStatement("query.finsense.data.fetch");
+            stmt = daoManager.getStatement("query.finsense.data.fetch",daoManager.finsenseDataSourceConnection);
             con = stmt.getConnection();
 
             stmt.setDate(1, Date.valueOf(startDate));
@@ -33,10 +35,12 @@ public class MonthlyLAPSDataDAO {
 
             resultSet = stmt.executeQuery();
             while (resultSet.next()) {
-                resultList.add(Map.of(
-                        "request_status", resultSet.getString("request_status"),
-                        "count", resultSet.getInt("count(*)")
-                ));
+                LAPSDataCount lapsDataCount = new LAPSDataCount();
+
+                lapsDataCount.setStatus(resultSet.getString(1));
+                lapsDataCount.setCount(resultSet.getString(2));
+
+                resultList.add(lapsDataCount);
             }
         } catch (SQLException e) {
             logger.error("Exception occurred while fetching Finsense request status counts.", e);
@@ -47,14 +51,14 @@ public class MonthlyLAPSDataDAO {
         return resultList;
     }
 
-    public List<Map<String, Object>> fetchPfmRequestStatusCount(LocalDate startDate, LocalDate endDate) {
+    public List<LAPSDataCount> fetchPfmStatusCount(LocalDate startDate, LocalDate endDate) {
         ResultSet resultSet = null;
         PreparedStatement stmt = null;
         Connection con = null;
-        List<Map<String, Object>> resultList = new ArrayList<>();
+        List<LAPSDataCount> resultList = new ArrayList<>();
 
         try {
-            stmt = daoManager.getStatement("query.pfm.data.fetch");
+            stmt = daoManager.getStatement("query.pfm.data.fetch", daoManager.pfmDataSource);
             con = stmt.getConnection();
 
             stmt.setDate(1, Date.valueOf(startDate));
@@ -62,10 +66,12 @@ public class MonthlyLAPSDataDAO {
 
             resultSet = stmt.executeQuery();
             while (resultSet.next()) {
-                resultList.add(Map.of(
-                        "request_status", resultSet.getString("request_status"),
-                        "count", resultSet.getInt("count(*)")
-                ));
+                LAPSDataCount lapsDataCount = new LAPSDataCount();
+
+                lapsDataCount.setStatus(resultSet.getString(1));
+                lapsDataCount.setCount(resultSet.getString(2));
+
+                resultList.add(lapsDataCount);
             }
         } catch (SQLException e) {
             logger.error("Exception occurred while fetching Finsense request status counts.", e);

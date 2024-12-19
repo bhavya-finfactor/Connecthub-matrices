@@ -1,6 +1,5 @@
 package com.ftpl.finfactor.reporting.Model;
 
-import com.ftpl.finfactor.reporting.utility.MonthlyConnecthubData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,7 +8,7 @@ import java.util.List;
 
 public abstract class ReportingTask implements Runnable {
 
-    private static final Logger logger = LoggerFactory.getLogger(MonthlyConnecthubData.class);
+    private static final Logger logger = LoggerFactory.getLogger(ReportingTask.class);
 
     protected ReportType getReportType() {
         return null;

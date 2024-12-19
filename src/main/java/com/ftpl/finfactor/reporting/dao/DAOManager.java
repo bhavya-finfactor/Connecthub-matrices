@@ -1,6 +1,7 @@
 package com.ftpl.finfactor.reporting.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -14,9 +15,14 @@ public class DAOManager {
     private Environment env;
 
     @Autowired
-    private DataSource dataSource;
+    @Qualifier("finsenseDataSource")
+    public DataSource finsenseDataSourceConnection;
 
-    public PreparedStatement getStatement(String queryProperty) throws SQLException {
+    @Autowired
+    @Qualifier("pfmDataSource")
+    public DataSource pfmDataSource;
+
+    public PreparedStatement getStatement(String queryProperty, DataSource dataSource) throws SQLException {
         String query = env.getProperty(queryProperty);
         if (query == null) {
             throw new IllegalArgumentException("Query not found for property: " + queryProperty);
