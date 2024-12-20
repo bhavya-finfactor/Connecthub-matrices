@@ -98,7 +98,7 @@ public class MonthlyLAPSData extends ReportingTask {
         }
     }
 
-    private Map<String, Integer> computeCounts(List<LAPSDataCount> dataList) {
+    public Map<String, Integer> computeCounts(List<LAPSDataCount> dataList) {
         Map<String, Integer> counts = new HashMap<>();
         for (LAPSDataCount data : dataList) {
             counts.merge(data.getStatus(), Integer.parseInt(data.getCount()), Integer::sum);
