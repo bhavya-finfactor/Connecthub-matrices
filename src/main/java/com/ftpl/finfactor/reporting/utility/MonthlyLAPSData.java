@@ -33,12 +33,15 @@ public class MonthlyLAPSData extends ReportingTask {
     @Value("${report.laps.email.recipients}")
     private List<String> emailRecipients;
 
+    LocalDate startDate = LocalDate.now().minusMonths(1).withDayOfMonth(1);
+    LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+
     @Override
     public Serializable fetchData() {
 
-        LocalDate startDate = LocalDate.now().minusMonths(1).withDayOfMonth(1);
-        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
-
+        System.out.println("Start date"+startDate);
+        System.out.println("end date"+endDate);
         List<LAPSDataCount> finsenseData = monthlyLAPSDataDAO.fetchFinsenseStatusCount(startDate,endDate);
 
         List<LAPSDataCount> pfmData = monthlyLAPSDataDAO.fetchPfmStatusCount(startDate, endDate);
@@ -71,13 +74,15 @@ public class MonthlyLAPSData extends ReportingTask {
         int totalCount = readyCount + failedCount + pendingNullCount;
 
         Context emailData = new Context();
+        emailData.setVariable("startDate", startDate);
+        emailData.setVariable("endDate", endDate);
         emailData.setVariable("totalTransactions", totalCount);
         emailData.setVariable("successfulTransactions", readyCount);
         emailData.setVariable("technicalDeclines", failedCount);
         emailData.setVariable("pending", pendingNullCount);
 
         // Load the template and format the data
-        String formattedData = thymeleafTemplateConfig.springTemplateEngine().process("emailTemplate.html",emailData);
+        String formattedData = thymeleafTemplateConfig.springTemplateEngine().process("lapsDataTemplate.html",emailData);
 
         // send email
         emailService.sendEmail(emailRecipients, "Monthly LAPS Data Report", formattedData);

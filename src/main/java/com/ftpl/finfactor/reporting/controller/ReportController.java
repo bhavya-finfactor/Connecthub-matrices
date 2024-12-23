@@ -1,5 +1,6 @@
 package com.ftpl.finfactor.reporting.controller;
 
+import com.ftpl.finfactor.reporting.model.ReportType;
 import com.ftpl.finfactor.reporting.utility.MonthlyLAPSData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,17 +42,17 @@ public class ReportController {
         }
     }
 
-    private void generateReportData(String reportType) throws Exception {
+    private void generateReportData(String dataType) throws Exception {
 
-        switch (reportType) {
+        switch (ReportType.valueOf(dataType)) {
 
-            case "lapsdatareport":
+            case MONTHLY_LAPS_DATA_REPORT:
                 Serializable lapsData = monthlyLAPSData.fetchData();
                 monthlyLAPSData.triggerReport(lapsData);
                 break;
 
             default:
-                throw new IllegalArgumentException("Unsupported report type: " + reportType);
+                throw new IllegalArgumentException("Unsupported report type: " + dataType);
         }
     }
 

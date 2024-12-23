@@ -40,14 +40,4 @@ public class DataSourceConfig {
         return new HikariDataSource(config);
     }
 
-    @Bean(name = "finsenseJdbcTemplate")
-    public JdbcTemplate finsenseJdbcTemplate(@Qualifier("finsenseDataSource") DataSource dataSource) {
-        return new JdbcTemplate(dataSource);
-    }
-
-    @Bean(name = "pfmJdbcTemplate")
-    public JdbcTemplate pfmJdbcTemplate(@Qualifier("pfmDataSource") DataSource dataSource) {
-        return new JdbcTemplate(dataSource);
-    }
-
 }
