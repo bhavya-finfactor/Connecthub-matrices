@@ -1,8 +1,7 @@
 package com.ftpl.finfactor.reporting.dao;
 
-import com.ftpl.finfactor.reporting.Model.LAPSDataCount;
+import com.ftpl.finfactor.reporting.model.LAPSDataCount;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,19 +26,19 @@ public class MonthlyLAPSDataDAO {
         List<LAPSDataCount> resultList = new ArrayList<>();
 
         try {
-            stmt = daoManager.getStatement("query.finsense.data.fetch",daoManager.finsenseDataSourceConnection);
+            stmt = daoManager.getStatement("select request_status, count(*) from fiu_data_request_can where request_timestamp >= ? and request_timestamp <= ? group by request_status;",daoManager.finsenseDataSourceConnection);
             con = stmt.getConnection();
 
             stmt.setDate(1, Date.valueOf(startDate));
             stmt.setDate(2, Date.valueOf(endDate));
 
             resultSet = stmt.executeQuery();
+
             while (resultSet.next()) {
-                LAPSDataCount lapsDataCount = new LAPSDataCount();
-
-                lapsDataCount.setStatus(resultSet.getString(1));
-                lapsDataCount.setCount(resultSet.getString(2));
-
+                LAPSDataCount lapsDataCount = new LAPSDataCount(
+                        resultSet.getString(1),
+                        resultSet.getString(2)
+                );
                 resultList.add(lapsDataCount);
             }
         } catch (SQLException e) {
@@ -58,18 +57,19 @@ public class MonthlyLAPSDataDAO {
         List<LAPSDataCount> resultList = new ArrayList<>();
 
         try {
-            stmt = daoManager.getStatement("query.pfm.data.fetch", daoManager.pfmDataSource);
+            stmt = daoManager.getStatement("select session_status, count(*) from fiu_pfm_customer_consent_session where session_fidata_range_to >= ? and session_fidata_range_to <= ? group by session_status;", daoManager.pfmDataSource);
             con = stmt.getConnection();
 
             stmt.setDate(1, Date.valueOf(startDate));
             stmt.setDate(2, Date.valueOf(endDate));
 
             resultSet = stmt.executeQuery();
-            while (resultSet.next()) {
-                LAPSDataCount lapsDataCount = new LAPSDataCount();
 
-                lapsDataCount.setStatus(resultSet.getString(1));
-                lapsDataCount.setCount(resultSet.getString(2));
+            while (resultSet.next()) {
+                LAPSDataCount lapsDataCount = new LAPSDataCount(
+                        resultSet.getString(1),
+                        resultSet.getString(2)
+                );
 
                 resultList.add(lapsDataCount);
             }

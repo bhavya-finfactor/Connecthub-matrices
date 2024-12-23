@@ -1,4 +1,4 @@
-package com.ftpl.finfactor.reporting.Scheduler;
+package com.ftpl.finfactor.reporting.scheduler;
 
 import com.ftpl.finfactor.reporting.utility.MonthlyLAPSData;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,6 @@ public class DataScheduler {
 
     @Autowired
     private MonthlyLAPSData monthlyLAPSData;
-
 
     @Scheduled(cron = "#{@monthlyLAPSData.cronScheduler()}")
     public void executeMonthlyLAPSData(){

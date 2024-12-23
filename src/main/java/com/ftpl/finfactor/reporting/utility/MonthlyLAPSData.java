@@ -1,17 +1,16 @@
 package com.ftpl.finfactor.reporting.utility;
 
-import com.ftpl.finfactor.reporting.Model.LAPSDataCount;
-import com.ftpl.finfactor.reporting.Model.ReportingTask;
-import com.ftpl.finfactor.reporting.Service.EmailService;
+import com.ftpl.finfactor.reporting.model.LAPSDataCount;
+import com.ftpl.finfactor.reporting.model.ReportType;
+import com.ftpl.finfactor.reporting.model.ReportingTask;
+import com.ftpl.finfactor.reporting.service.EmailService;
 import com.ftpl.finfactor.reporting.configuration.ThymeleafTemplateConfig;
 import com.ftpl.finfactor.reporting.dao.MonthlyLAPSDataDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -31,17 +30,8 @@ public class MonthlyLAPSData extends ReportingTask {
     @Autowired
     private EmailService emailService;
 
-    @Autowired
-    private TemplateEngine templateEngine;
-
-    @Value("${report.email.recipients}")
-    private String emailRecipients;
-
-    @Value("${report.email.subject}")
-    private String emailSubject;
-
-    @Value("classpath:/templates/emailTemplate.html")
-    private Resource emailBodyTemplate;
+    @Value("${report.laps.email.recipients}")
+    private List<String> emailRecipients;
 
     @Override
     public Serializable fetchData() {
@@ -54,7 +44,7 @@ public class MonthlyLAPSData extends ReportingTask {
         List<LAPSDataCount> pfmData = monthlyLAPSDataDAO.fetchPfmStatusCount(startDate, endDate);
 
         logger.info("Fetched {} rows for Finsense and {} rows for PFM data for reportType={}",
-                finsenseData.size(), pfmData.size(), getReportType());
+                finsenseData.size(), pfmData.size(), ReportType.MONTHLY_LAPS_DATA_REPORT);
 
         CombinedLAPSData combinedData = new CombinedLAPSData(finsenseData, pfmData);
 
@@ -64,44 +54,39 @@ public class MonthlyLAPSData extends ReportingTask {
     @Override
     public void triggerReport(Serializable data) throws Exception {
 
-        Context context = new Context();
-
-        if (data instanceof CombinedLAPSData combinedData) {
-
-            Map<String, Integer> finsenseCounts = computeCounts(combinedData.getFinsenseData());
-            Map<String, Integer> pfmCounts = computeCounts(combinedData.getPfmData());
-
-
-            // Calculate differences
-            int readyCount = finsenseCounts.getOrDefault("READY", 0) - pfmCounts.getOrDefault("READY", 0);
-            int failedCount = finsenseCounts.getOrDefault("FAILED", 0) - pfmCounts.getOrDefault("FAILED", 0);
-            int pendingNullCount =
-                    finsenseCounts.getOrDefault("PENDING", 0) + finsenseCounts.getOrDefault("null", 0)
-                            - (pfmCounts.getOrDefault("PENDING", 0) + pfmCounts.getOrDefault("null", 0));
-            int totalCount = readyCount + failedCount + pendingNullCount;
-
-            Context emailData = new Context();
-            emailData.setVariable("totalTransactions", totalCount);
-            emailData.setVariable("successfulTransactions", readyCount);
-            emailData.setVariable("technicalDeclines", failedCount);
-            emailData.setVariable("pending", pendingNullCount);
-
-            // Load the template and format the data
-            String formattedData = thymeleafTemplateConfig.springTemplateEngine().process("emailTemplate.html",emailData);
-
-            // send email
-            List<String> recipients = Arrays.asList(emailRecipients.split(","));
-
-            emailService.sendEmail(recipients, emailSubject, formattedData);
-        } else {
-            logger.info("No valid data to send for reportType={}", getReportType());
+        if (!(data instanceof CombinedLAPSData combinedData)) {
+            logger.warn("Invalid data type provided for report generation.");
+            return;
         }
+
+        Map<String, Integer> finsenseCounts = computeCounts(combinedData.finsenseData());
+        Map<String, Integer> pfmCounts = computeCounts(combinedData.pfmData());
+
+        // Calculate differences
+        int readyCount = finsenseCounts.getOrDefault("READY", 0) - pfmCounts.getOrDefault("READY", 0);
+        int failedCount = finsenseCounts.getOrDefault("FAILED", 0) - pfmCounts.getOrDefault("FAILED", 0);
+        int pendingNullCount =
+                finsenseCounts.getOrDefault("PENDING", 0) + finsenseCounts.getOrDefault("null", 0)
+                        - (pfmCounts.getOrDefault("PENDING", 0) + pfmCounts.getOrDefault("null", 0));
+        int totalCount = readyCount + failedCount + pendingNullCount;
+
+        Context emailData = new Context();
+        emailData.setVariable("totalTransactions", totalCount);
+        emailData.setVariable("successfulTransactions", readyCount);
+        emailData.setVariable("technicalDeclines", failedCount);
+        emailData.setVariable("pending", pendingNullCount);
+
+        // Load the template and format the data
+        String formattedData = thymeleafTemplateConfig.springTemplateEngine().process("emailTemplate.html",emailData);
+
+        // send email
+        emailService.sendEmail(emailRecipients, "Monthly LAPS Data Report", formattedData);
     }
 
     public Map<String, Integer> computeCounts(List<LAPSDataCount> dataList) {
         Map<String, Integer> counts = new HashMap<>();
         for (LAPSDataCount data : dataList) {
-            counts.merge(data.getStatus(), Integer.parseInt(data.getCount()), Integer::sum);
+            counts.merge(data.status(), Integer.parseInt(data.count()), Integer::sum);
         }
         return counts;
     }
@@ -112,29 +97,6 @@ public class MonthlyLAPSData extends ReportingTask {
     }
 
 
-    public static class CombinedLAPSData implements Serializable {
-        private final List<LAPSDataCount> finsenseData;
-        private final List<LAPSDataCount> pfmData;
-
-        public CombinedLAPSData(List<LAPSDataCount> finsenseData, List<LAPSDataCount> pfmData) {
-            this.finsenseData = finsenseData;
-            this.pfmData = pfmData;
-        }
-
-        public List<LAPSDataCount> getFinsenseData() {
-            return finsenseData;
-        }
-
-        public List<LAPSDataCount> getPfmData() {
-            return pfmData;
-        }
-
-        @Override
-        public String toString() {
-            return "CombinedLAPSData{" +
-                    "finsenseData=" + finsenseData +
-                    ", pfmData=" + pfmData +
-                    '}';
-        }
+    public record CombinedLAPSData(List<LAPSDataCount> finsenseData, List<LAPSDataCount> pfmData) implements Serializable {
     }
 }

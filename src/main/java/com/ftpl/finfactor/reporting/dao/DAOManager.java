@@ -22,10 +22,9 @@ public class DAOManager {
     @Qualifier("pfmDataSource")
     public DataSource pfmDataSource;
 
-    public PreparedStatement getStatement(String queryProperty, DataSource dataSource) throws SQLException {
-        String query = env.getProperty(queryProperty);
+    public PreparedStatement getStatement(String query, DataSource dataSource) throws SQLException {
         if (query == null) {
-            throw new IllegalArgumentException("Query not found for property: " + queryProperty);
+            throw new IllegalArgumentException("Query not found");
         }
         Connection connection = dataSource.getConnection();
         return connection.prepareStatement(query);
