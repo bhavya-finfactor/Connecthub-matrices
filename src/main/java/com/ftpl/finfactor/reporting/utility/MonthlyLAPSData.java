@@ -40,8 +40,6 @@ public class MonthlyLAPSData extends ReportingTask {
     @Override
     public Serializable fetchData() {
 
-        System.out.println("Start date"+startDate);
-        System.out.println("end date"+endDate);
         List<LAPSDataCount> finsenseData = monthlyLAPSDataDAO.fetchFinsenseStatusCount(startDate,endDate);
 
         List<LAPSDataCount> pfmData = monthlyLAPSDataDAO.fetchPfmStatusCount(startDate, endDate);
@@ -69,8 +67,8 @@ public class MonthlyLAPSData extends ReportingTask {
         int readyCount = finsenseCounts.getOrDefault("READY", 0) - pfmCounts.getOrDefault("READY", 0);
         int failedCount = finsenseCounts.getOrDefault("FAILED", 0) - pfmCounts.getOrDefault("FAILED", 0);
         int pendingNullCount =
-                finsenseCounts.getOrDefault("PENDING", 0) + finsenseCounts.getOrDefault("null", 0)
-                        - (pfmCounts.getOrDefault("PENDING", 0) + pfmCounts.getOrDefault("null", 0));
+                finsenseCounts.getOrDefault("PENDING", 0) + finsenseCounts.getOrDefault(null, 0)
+                        - (pfmCounts.getOrDefault("PENDING", 0) + pfmCounts.getOrDefault(null, 0));
         int totalCount = readyCount + failedCount + pendingNullCount;
 
         Context emailData = new Context();
