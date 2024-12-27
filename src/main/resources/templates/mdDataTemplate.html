@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        table {
+            border-collapse: collapse;
+            width: 50%;
+            margin: 20px 0;
+            font-size: 16px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .header {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <p>Hello Team,</p>
+    <p>Here are the FIP Transactions summary for the period:</p>
+    <p><strong>Start Date:</strong> <span th:text="${startDate}"></span></p>
+    <p><strong>End Date:</strong> <span th:text="${endDate}"></span></p>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>Metric</th>
+        <th>Value</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>Total FIP Transactions</td>
+        <td th:text="${totalTransactions}"></td>
+    </tr>
+    <tr>
+        <td>Successful Transactions</td>
+        <td th:text="${successfulTransactions}"></td>
+    </tr>
+    <tr>
+        <td>Technical Declines</td>
+        <td th:text="${technicalDeclines}"></td>
+    </tr>
+    <tr>
+        <td>Pending Transactions</td>
+        <td th:text="${pending}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="footer">
+    <p>Thanks & Regards,</p>
+    <p>Support Team</p>
+    <p>Finfactor Technologies</p>
+</div>
+</body>
+</html>

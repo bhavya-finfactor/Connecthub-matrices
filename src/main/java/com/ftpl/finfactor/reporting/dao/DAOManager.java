@@ -1,28 +1,14 @@
 package com.ftpl.finfactor.reporting.dao;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.sql.*;
 
 @Component
-public class DAOManager {
+public interface DAOManager {
 
-    @Autowired
-    private Environment env;
-
-    @Autowired
-    @Qualifier("finsenseDataSource")
-    public DataSource finsenseDataSourceConnection;
-
-    @Autowired
-    @Qualifier("pfmDataSource")
-    public DataSource pfmDataSource;
-
-    public PreparedStatement getStatement(String query, DataSource dataSource) throws SQLException {
+    default PreparedStatement getStatement(String query, DataSource dataSource) throws SQLException {
         if (query == null) {
             throw new IllegalArgumentException("Query not found");
         }
@@ -30,7 +16,7 @@ public class DAOManager {
         return connection.prepareStatement(query);
     }
 
-    public void close(ResultSet rs, Statement stmt, Connection con) {
+    default void close(ResultSet rs, Statement stmt, Connection con) {
         try {
             if (rs != null) rs.close();
         } catch (SQLException ignored) { }

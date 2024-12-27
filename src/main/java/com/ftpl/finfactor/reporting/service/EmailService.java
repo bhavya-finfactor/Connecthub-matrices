@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public class EmailService {
 
-    @Value("${report.laps.email.from}")
+    @Value("${report.email.from}")
     private String from;
 
     @Autowired

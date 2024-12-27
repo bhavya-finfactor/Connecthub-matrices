@@ -29,8 +29,20 @@ public class DataSourceConfig {
         return new HikariConfig();
     }
 
+    @Bean(name = "mdDataSourceProperties")
+    @ConfigurationProperties(prefix = "md.datasource")
+    public HikariConfig mdDataSourceProperties() {
+        return new HikariConfig();
+    }
+
     @Bean(name = "finsenseDataSource")
     public DataSource finsenseDataSource(@Qualifier("finsenseDataSourceProperties") HikariConfig hikariConfig) throws IOException {
+        return new HikariDataSource(hikariConfig);
+
+    }
+
+    @Bean(name = "mdDataSource")
+    public DataSource mdDataSource(@Qualifier("mdDataSourceProperties") HikariConfig hikariConfig) throws IOException {
         return new HikariDataSource(hikariConfig);
 
     }

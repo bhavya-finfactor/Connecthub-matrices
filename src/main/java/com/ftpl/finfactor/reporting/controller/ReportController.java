@@ -1,58 +1,68 @@
 package com.ftpl.finfactor.reporting.controller;
 
 import com.ftpl.finfactor.reporting.model.ReportType;
+import com.ftpl.finfactor.reporting.model.ReportingTask;
 import com.ftpl.finfactor.reporting.utility.MonthlyLAPSData;
+import com.ftpl.finfactor.reporting.utility.MonthlyMDData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+
 @RestController
+@RequestMapping("/v1/reports")
 public class ReportController {
 
+    private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
 
     @Autowired
     MonthlyLAPSData monthlyLAPSData;
 
-    @PostMapping("/generate-report")
-    public ResponseEntity<Map<String, Object>> generateReport( @RequestParam(value = "reportType") String reportType) {
+    @Autowired
+    MonthlyMDData monthlyMDData;
+
+
+    @PostMapping("/{reportType}/trigger")
+    public ResponseEntity<Map<String, Object>> generateReport( @PathVariable("reportType") ReportType reportType) {
 
         Map<String, Object> response = new HashMap<>();
         try {
-            if (reportType == null || reportType.trim().isEmpty()) {
-                response.put("error", "Invalid reportType. Please provide a valid report type.");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-            }
-
             // Generate Report Data
-            generateReportData(reportType);
+            logger.debug("Fetching the Data for reportType: {}",reportType);
+            ReportingTask reportingTask = getTaskForReportType(reportType);
+
+            logger.info("Execution of Data Report for reportType: {}",reportType);
+            reportingTask.run();
+
             response.put("emailStatus", "Email sent successfully!");
+            logger.info("Report generation completed successfully for reportType: {}", reportType);
 
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
+            logger.error("Error while generating the report for reportType: {}. Error: {}", reportType, e.getMessage(), e);
             response.put("error", "Error while generating the report: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
-    private void generateReportData(String dataType) throws Exception {
+    private ReportingTask getTaskForReportType(ReportType reportType) throws Exception {
 
-        switch (ReportType.valueOf(dataType)) {
-
+        switch (reportType) {
             case MONTHLY_LAPS_DATA_REPORT:
-                Serializable lapsData = monthlyLAPSData.fetchData();
-                monthlyLAPSData.triggerReport(lapsData);
-                break;
+                return monthlyLAPSData;
+
+            case MONTHLY_MD_DATA_REPORT:
+                return monthlyMDData;
 
             default:
-                throw new IllegalArgumentException("Unsupported report type: " + dataType);
+                throw new IllegalArgumentException("Unsupported report type: " + reportType);
         }
     }
 
