@@ -51,14 +51,14 @@ public class WeeklyDFSData extends ReportingTask {
     @Override
     public Serializable fetchData() {
 
-        List<DFSDataCount> finsenseData = weeklyDFSDataDAO.fetchFICounts(startDate,endDate);
+        List<DFSDataCount> fiData = weeklyDFSDataDAO.fetchFICounts(startDate,endDate);
 
-        List<DFSDataCount> pfmData = weeklyDFSDataDAO.fetchConsentCounts(startDate, endDate);
+        List<DFSDataCount> consenseData = weeklyDFSDataDAO.fetchConsentCounts(startDate, endDate);
 
-        logger.info("Fetched {} rows for Finsense and {} rows for PFM data for reportType={}",
-                finsenseData.size(), pfmData.size(), getReportType());
+        logger.info("Fetched {} rows for FiData and {} rows for Consent data for reportType={}",
+                fiData.size(), consenseData.size(), getReportType());
 
-        WeeklyDFSData.CombinedDFSData combinedData = new WeeklyDFSData.CombinedDFSData(finsenseData, pfmData);
+        WeeklyDFSData.CombinedDFSData combinedData = new WeeklyDFSData.CombinedDFSData(fiData, consenseData);
 
         return combinedData;
     }
@@ -116,7 +116,7 @@ public class WeeklyDFSData extends ReportingTask {
 
     @Override
     public String cronSchedule() {
-        return "0 * * * * *";
+        return "0 0 7 1 * ?";
     }
 
     private record CombinedDFSData(List<DFSDataCount> fiDataCounts, List<DFSDataCount> consentDataCounts) implements Serializable {

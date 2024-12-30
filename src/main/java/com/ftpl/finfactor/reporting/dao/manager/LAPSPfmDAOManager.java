@@ -20,6 +20,6 @@ public class LAPSPfmDAOManager implements DAOManager{
 
     @Override
     public void close(ResultSet rs, Statement stmt, Connection con) {
-
+        DAOManager.super.close(rs, stmt, con);
     }
 }

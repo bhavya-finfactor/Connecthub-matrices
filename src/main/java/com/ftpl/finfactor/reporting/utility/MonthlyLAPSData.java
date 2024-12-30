@@ -108,7 +108,7 @@ public class MonthlyLAPSData extends ReportingTask {
 
     @Override
     public String cronSchedule() {
-        return "0 15 7 26 12 ? ";
+        return "0 0 7 1 * ?";
     }
 
 

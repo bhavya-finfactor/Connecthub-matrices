@@ -101,6 +101,6 @@ public class MonthlyMDData extends ReportingTask {
 
     @Override
     public String cronSchedule() {
-        return "0 * 2 * * *";
+        return "0 0 7 1 * ?";
     }
 }
