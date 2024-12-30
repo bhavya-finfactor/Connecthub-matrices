@@ -35,8 +35,20 @@ public class DataSourceConfig {
         return new HikariConfig();
     }
 
+    @Bean(name = "dfsDataSourceProperties")
+    @ConfigurationProperties(prefix = "dfs.datasource")
+    public HikariConfig dfsDataSourceProperties() {
+        return new HikariConfig();
+    }
+
     @Bean(name = "finsenseDataSource")
     public DataSource finsenseDataSource(@Qualifier("finsenseDataSourceProperties") HikariConfig hikariConfig) throws IOException {
+        return new HikariDataSource(hikariConfig);
+
+    }
+
+    @Bean(name = "dfsDataSource")
+    public DataSource dfsDataSource(@Qualifier("dfsDataSourceProperties") HikariConfig hikariConfig) throws IOException {
         return new HikariDataSource(hikariConfig);
 
     }

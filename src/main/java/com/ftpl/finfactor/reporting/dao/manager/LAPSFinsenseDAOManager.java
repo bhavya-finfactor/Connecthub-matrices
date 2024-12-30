@@ -1,4 +1,4 @@
-package com.ftpl.finfactor.reporting.dao;
+package com.ftpl.finfactor.reporting.dao.manager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

@@ -4,6 +4,7 @@ import com.ftpl.finfactor.reporting.model.ReportType;
 import com.ftpl.finfactor.reporting.model.ReportingTask;
 import com.ftpl.finfactor.reporting.utility.MonthlyLAPSData;
 import com.ftpl.finfactor.reporting.utility.MonthlyMDData;
+import com.ftpl.finfactor.reporting.utility.WeeklyDFSData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ public class ReportController {
 
     @Autowired
     MonthlyMDData monthlyMDData;
+
+    @Autowired
+    WeeklyDFSData weeklyDFSData;
 
 
     @PostMapping("/{reportType}/trigger")
@@ -60,6 +64,9 @@ public class ReportController {
 
             case MONTHLY_MD_DATA_REPORT:
                 return monthlyMDData;
+
+            case WEEKLY_DFS_REPORT:
+                return weeklyDFSData;
 
             default:
                 throw new IllegalArgumentException("Unsupported report type: " + reportType);

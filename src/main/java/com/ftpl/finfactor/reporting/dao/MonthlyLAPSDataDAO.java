@@ -1,13 +1,13 @@
 package com.ftpl.finfactor.reporting.dao;
 
+import com.ftpl.finfactor.reporting.dao.manager.LAPSFinsenseDAOManager;
+import com.ftpl.finfactor.reporting.dao.manager.LAPSPfmDAOManager;
 import com.ftpl.finfactor.reporting.model.LAPSDataCount;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.sql.Date;
 import java.time.LocalDate;

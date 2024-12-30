@@ -1,5 +1,6 @@
 package com.ftpl.finfactor.reporting.dao;
 
+import com.ftpl.finfactor.reporting.dao.manager.MonthlyMDDataDAOManager;
 import com.ftpl.finfactor.reporting.model.MDDataCount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

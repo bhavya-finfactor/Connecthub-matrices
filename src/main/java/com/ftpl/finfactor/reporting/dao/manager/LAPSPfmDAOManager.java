@@ -1,4 +1,4 @@
-package com.ftpl.finfactor.reporting.dao;
+package com.ftpl.finfactor.reporting.dao.manager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -8,18 +8,18 @@ import javax.sql.DataSource;
 import java.sql.*;
 
 @Component
-public class MonthlyMDDataDAOManager implements DAOManager{
+public class LAPSPfmDAOManager implements DAOManager{
 
     @Autowired
-    @Qualifier("mdDataSource")
-    private DataSource mdDataReportDataSource;
+    @Qualifier("pfmDataSource")
+    private DataSource pfmDataSource;
 
     public PreparedStatement getStatement(String query) throws SQLException {
-        return DAOManager.super.getStatement(query, mdDataReportDataSource);
+        return DAOManager.super.getStatement(query, pfmDataSource);
     }
 
     @Override
     public void close(ResultSet rs, Statement stmt, Connection con) {
-        DAOManager.super.close(rs, stmt, con);
+
     }
 }

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Email Template</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+<p>Hello Team,</p>
+<p>Please find below the DFS statistics for the past week "Monday" to "Friday":</p>
+<table>
+    <thead>
+    <tr>
+        <th>Metric</th>
+        <th>Value</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    <tr>
+        <td class="highlight">FI request received from AA</td>
+        <td th:text="${fiReqReceivedFromAA}"></td>
+    </tr>
+    <tr>
+        <td class="highlight">FI Notification given by FIP</td>
+        <td th:text="${fiNotificationByFIP}"></td>
+    </tr>
+    <tr>
+        <td class="highlight">FI Fetch by AA</td>
+        <td th:text="${fiFetchByAA}"></td>
+    </tr>
+    <tr>
+        <td class="highlight">Average time of Disposal(in seconds)</td>
+        <td th:text="${avgTimeOfDisposal}"></td>
+    </tr>
+    </tbody>
+</table>
+<p>Thanks & Regards,</p>
+<p>Team Finfactor</p>
+</body>
+</html>

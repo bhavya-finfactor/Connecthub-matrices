@@ -51,7 +51,6 @@ public class MonthlyMDData extends ReportingTask {
         List<MDDataCount> mdData = monthlyMDDataDao.fetchMDData(startDate,endDate);
         logger.info("Fetched {} rows for MD Data for reportType={}", mdData.size(), getReportType());
 
-        System.out.println("data MD no"+mdData);
         return (Serializable) mdData;
     }
 
@@ -102,6 +101,6 @@ public class MonthlyMDData extends ReportingTask {
 
     @Override
     public String cronSchedule() {
-        return "0 * * * * *";
+        return "0 * 2 * * *";
     }
 }

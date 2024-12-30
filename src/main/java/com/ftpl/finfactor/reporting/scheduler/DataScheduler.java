@@ -2,6 +2,7 @@ package com.ftpl.finfactor.reporting.scheduler;
 
 import com.ftpl.finfactor.reporting.utility.MonthlyLAPSData;
 import com.ftpl.finfactor.reporting.utility.MonthlyMDData;
+import com.ftpl.finfactor.reporting.utility.WeeklyDFSData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,9 @@ public class DataScheduler {
     @Autowired
     private MonthlyMDData monthlyMDData;
 
+    @Autowired
+    private WeeklyDFSData weeklyDFSData;
+
     @Scheduled(cron = "#{@monthlyLAPSData.cronSchedule()}")
     public void executeMonthlyLAPSData(){
         monthlyLAPSData.run();
@@ -23,5 +27,10 @@ public class DataScheduler {
     @Scheduled(cron = "#{@monthlyMDData.cronSchedule()}")
     public void executeMonthlyMDData(){
         monthlyMDData.run();
+    }
+
+    @Scheduled(cron = "#{@weeklyDFSData.cronSchedule()}")
+    public void executeWeeklyDFSData(){
+        weeklyDFSData.run();
     }
 }
