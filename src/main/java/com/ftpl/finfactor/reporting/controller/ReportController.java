@@ -47,12 +47,12 @@ public class ReportController {
             response.put("emailStatus", "Email sent successfully!");
             logger.info("Report generation completed successfully for reportType: {}", reportType);
 
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok().build();
 
         } catch (Exception e) {
             logger.error("Error while generating the report for reportType: {}. Error: {}", reportType, e.getMessage(), e);
             response.put("error", "Error while generating the report: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
