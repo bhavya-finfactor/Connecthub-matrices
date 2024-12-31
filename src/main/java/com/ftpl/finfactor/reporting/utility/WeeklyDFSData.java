@@ -3,6 +3,7 @@ package com.ftpl.finfactor.reporting.utility;
 import com.ftpl.finfactor.reporting.configuration.ThymeleafTemplateConfig;
 import com.ftpl.finfactor.reporting.dao.WeeklyDFSDataDAO;
 import com.ftpl.finfactor.reporting.model.DFSDataCount;
+import com.ftpl.finfactor.reporting.model.LAPSDataCount;
 import com.ftpl.finfactor.reporting.model.ReportType;
 import com.ftpl.finfactor.reporting.model.ReportingTask;
 import com.ftpl.finfactor.reporting.service.EmailService;
@@ -126,7 +127,6 @@ public class WeeklyDFSData extends ReportingTask {
     @Override
     public String cronSchedule() {
         return cronExpression;
-//                "30 1 1 * * ?";
     }
 
     private record CombinedDFSData(List<DFSDataCount> fiDataCounts, List<DFSDataCount> consentDataCounts) implements Serializable {

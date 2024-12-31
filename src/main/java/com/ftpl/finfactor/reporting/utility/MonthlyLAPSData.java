@@ -59,7 +59,7 @@ public class MonthlyLAPSData extends ReportingTask {
         logger.info("Fetched {} rows for Finsense and {} rows for PFM data for reportType={}",
                 finsenseData.size(), pfmData.size(), getReportType());
 
-        CombinedLAPSData combinedData = new CombinedLAPSData(finsenseData, pfmData,startDate,endDate);
+        CombinedLAPSData combinedData = new CombinedLAPSData(finsenseData, pfmData, startDate, endDate);
 
         return combinedData;
     }
@@ -104,17 +104,17 @@ public class MonthlyLAPSData extends ReportingTask {
     }
 
     public Map<String, Integer> computeCounts(List<LAPSDataCount> dataList) {
+        Map<String, Integer> counts = new HashMap<>();
         for (LAPSDataCount data : dataList) {
             counts.merge(data.status(), Integer.parseInt(data.count()), Integer::sum);
         }
         return counts;
-    }        Map<String, Integer> counts = new HashMap<>();
+    }
 
 
     @Override
     public String cronSchedule() {
         return cronExpression;
-//                "30 1 1 * * ?";
     }
 
 
