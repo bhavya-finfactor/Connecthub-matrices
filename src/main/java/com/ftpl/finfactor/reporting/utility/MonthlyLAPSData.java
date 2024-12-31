@@ -32,11 +32,13 @@ public class MonthlyLAPSData extends ReportingTask {
     @Autowired
     private EmailService emailService;
 
+    @Value("${cron.monthly.laps.data}")
+    private String cronExpression;
+
+
     @Value("${report.laps.email.recipients}")
     private List<String> emailRecipients;
 
-    LocalDate startDate = LocalDate.now().minusMonths(1).withDayOfMonth(1);
-    LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
 
 
     @Override
@@ -47,6 +49,9 @@ public class MonthlyLAPSData extends ReportingTask {
     @Override
     public Serializable fetchData() {
 
+        LocalDate startDate = LocalDate.now().minusMonths(1).withDayOfMonth(1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
         List<LAPSDataCount> finsenseData = monthlyLAPSDataDAO.fetchFinsenseStatusCount(startDate,endDate);
 
         List<LAPSDataCount> pfmData = monthlyLAPSDataDAO.fetchPfmStatusCount(startDate, endDate);
@@ -54,7 +59,7 @@ public class MonthlyLAPSData extends ReportingTask {
         logger.info("Fetched {} rows for Finsense and {} rows for PFM data for reportType={}",
                 finsenseData.size(), pfmData.size(), getReportType());
 
-        CombinedLAPSData combinedData = new CombinedLAPSData(finsenseData, pfmData);
+        CombinedLAPSData combinedData = new CombinedLAPSData(finsenseData, pfmData,startDate,endDate);
 
         return combinedData;
     }
@@ -79,8 +84,8 @@ public class MonthlyLAPSData extends ReportingTask {
         int totalCount = readyCount + failedCount + pendingNullCount;
 
         Context emailData = new Context();
-        emailData.setVariable("startDate", startDate);
-        emailData.setVariable("endDate", endDate);
+        emailData.setVariable("startDate", combinedData.startDate);
+        emailData.setVariable("endDate", combinedData.endDate);
         emailData.setVariable("totalTransactions", totalCount);
         emailData.setVariable("successfulTransactions", readyCount);
         emailData.setVariable("technicalDeclines", failedCount);
@@ -99,19 +104,20 @@ public class MonthlyLAPSData extends ReportingTask {
     }
 
     public Map<String, Integer> computeCounts(List<LAPSDataCount> dataList) {
-        Map<String, Integer> counts = new HashMap<>();
         for (LAPSDataCount data : dataList) {
             counts.merge(data.status(), Integer.parseInt(data.count()), Integer::sum);
         }
         return counts;
-    }
+    }        Map<String, Integer> counts = new HashMap<>();
+
 
     @Override
     public String cronSchedule() {
-        return "0 0 7 1 * ?";
+        return cronExpression;
+//                "30 1 1 * * ?";
     }
 
 
-    public record CombinedLAPSData(List<LAPSDataCount> finsenseData, List<LAPSDataCount> pfmData) implements Serializable {
+    public record CombinedLAPSData(List<LAPSDataCount> finsenseData, List<LAPSDataCount> pfmData,LocalDate startDate, LocalDate endDate) implements Serializable {
     }
 }

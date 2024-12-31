@@ -19,17 +19,17 @@ public class DataScheduler {
     @Autowired
     private WeeklyDFSData weeklyDFSData;
 
-    @Scheduled(cron = "#{@monthlyLAPSData.cronSchedule()}")
+    @Scheduled(cron = "#{@monthlyLAPSData.cronSchedule()}", zone = "Asia/Kolkata")
     public void executeMonthlyLAPSData(){
         monthlyLAPSData.run();
     }
 
-    @Scheduled(cron = "#{@monthlyMDData.cronSchedule()}")
+    @Scheduled(cron = "#{@monthlyMDData.cronSchedule()}", zone = "Asia/Kolkata")
     public void executeMonthlyMDData(){
         monthlyMDData.run();
     }
 
-    @Scheduled(cron = "#{@weeklyDFSData.cronSchedule()}")
+    @Scheduled(cron = "#{@weeklyDFSData.cronSchedule()}", zone = "Asia/Kolkata")
     public void executeWeeklyDFSData(){
         weeklyDFSData.run();
     }

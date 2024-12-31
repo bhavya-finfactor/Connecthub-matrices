@@ -37,11 +37,12 @@ public class WeeklyDFSData extends ReportingTask {
     @Autowired
     private EmailService emailService;
 
+    @Value("${cron.weekly.dfs.data}")
+    private String cronExpression;
+
     @Value("${report.dfs.email.recipients}")
     private List<String> emailRecipients;
 
-    LocalDate startDate = LocalDate.now().minusWeeks(1).with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
-    LocalDate endDate = startDate.plusDays(4);
 
     @Override
     public ReportType getReportType() {
@@ -50,6 +51,10 @@ public class WeeklyDFSData extends ReportingTask {
 
     @Override
     public Serializable fetchData() {
+
+        LocalDate startDate = LocalDate.now().minusWeeks(1).with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
+        LocalDate endDate = startDate.plusDays(4);
+
 
         List<DFSDataCount> fiData = weeklyDFSDataDAO.fetchFICounts(startDate,endDate);
 
@@ -69,6 +74,10 @@ public class WeeklyDFSData extends ReportingTask {
             logger.warn("Invalid data type provided for report generation.");
             return;
         }
+
+        LocalDate startDate = LocalDate.now().minusWeeks(1).with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
+        LocalDate endDate = startDate.plusDays(4);
+
 
         Map<String, Integer> fiCounts = computeCounts(combinedData.fiDataCounts());
 
@@ -116,7 +125,8 @@ public class WeeklyDFSData extends ReportingTask {
 
     @Override
     public String cronSchedule() {
-        return "0 0 7 1 * ?";
+        return cronExpression;
+//                "30 1 1 * * ?";
     }
 
     private record CombinedDFSData(List<DFSDataCount> fiDataCounts, List<DFSDataCount> consentDataCounts) implements Serializable {

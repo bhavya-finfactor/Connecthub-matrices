@@ -11,7 +11,7 @@ import java.sql.*;
 public class MonthlyMDDataDAOManager implements DAOManager{
 
     @Autowired
-    @Qualifier("mdDataSource")
+    @Qualifier("chDataSource")
     private DataSource mdDataReportDataSource;
 
     public PreparedStatement getStatement(String query) throws SQLException {

@@ -11,7 +11,7 @@ import java.sql.*;
 public class WeeklyDFSDataDAOManager implements DAOManager{
 
     @Autowired
-    @Qualifier("dfsDataSource")
+    @Qualifier("chDataSource")
     private DataSource dfsDataSource;
 
     public PreparedStatement getStatement(String query) throws SQLException {
