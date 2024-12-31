@@ -31,7 +31,7 @@ public class MonthlyLAPSDataDAO {
         List<LAPSDataCount> resultList = new ArrayList<>();
 
         try {
-            stmt = fsdaoManager.getStatement("select request_status, count(*) from fiu_data_request_can where request_timestamp >= ? and request_timestamp <= ? group by request_status;");
+            stmt = fsdaoManager.getStatement("select request_status, count(*) from fiu_data_request_can where Date(request_timestamp) >= ? and Date(request_timestamp) <= ? group by request_status;");
             con = stmt.getConnection();
 
             stmt.setDate(1, Date.valueOf(startDate));
@@ -62,7 +62,7 @@ public class MonthlyLAPSDataDAO {
         List<LAPSDataCount> resultList = new ArrayList<>();
 
         try {
-            stmt = pfmdaoManager.getStatement("select session_status, count(*) from fiu_pfm_customer_consent_session where session_fidata_range_to >= ? and session_fidata_range_to <= ? group by session_status;");
+            stmt = pfmdaoManager.getStatement("select session_status, count(*) from fiu_pfm_customer_consent_session where Date(session_fidata_range_to) >= ? and Date(session_fidata_range_to) <= ? group by session_status;");
             con = stmt.getConnection();
 
             stmt.setDate(1, Date.valueOf(startDate));

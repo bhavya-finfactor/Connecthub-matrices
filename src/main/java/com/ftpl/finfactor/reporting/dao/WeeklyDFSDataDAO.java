@@ -32,7 +32,7 @@ public class WeeklyDFSDataDAO {
                 stmt = dfsDataDAOManager.getStatement(
                         "SELECT  fetch_status ,COUNT(fetch_status)" +
                                 "FROM fip_data_fetch_can " +
-                                "WHERE fetch_timestamp >= ? AND fetch_timestamp <= ? " +
+                                "WHERE Date(fetch_timestamp) >= ? AND Date(fetch_timestamp) <= ? " +
                                 "GROUP BY fetch_status;"
                 );
                 con = stmt.getConnection();
