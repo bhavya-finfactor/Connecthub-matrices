@@ -17,7 +17,7 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
-import static com.ftpl.finfactor.reporting.model.ReportType.MONTHLY_LAPS_DATA_REPORT;
+import static com.ftpl.finfactor.reporting.model.ReportType.LAPS_DATA_REPORT;
 
 @Component
 public class MonthlyLAPSData extends ReportingTask {
@@ -44,24 +44,24 @@ public class MonthlyLAPSData extends ReportingTask {
 
     @Override
     public ReportType getReportType() {
-        return MONTHLY_LAPS_DATA_REPORT;
+        return LAPS_DATA_REPORT;
     }
 
     @Override
     public Serializable fetchData() {
 
-        LocalDate now = LocalDate.now().minusMonths(1);
-        LocalDate firstDayOfQuarter = now.with(now.getMonth().firstMonthOfQuarter()).with(TemporalAdjusters.firstDayOfMonth());
-        LocalDate lastDayOfQuarter = now.with(TemporalAdjusters.lastDayOfMonth());
+        LocalDate lastMonthDate = LocalDate.now().minusMonths(1);
+        LocalDate firstDayOfLastQuarter = lastMonthDate.with(lastMonthDate.getMonth().firstMonthOfQuarter()).with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate lastDayOfLastQuarter = lastMonthDate.with(TemporalAdjusters.lastDayOfMonth());
 
-        List<LAPSDataCount> finsenseData = monthlyLAPSDataDAO.fetchFinsenseStatusCount(firstDayOfQuarter,lastDayOfQuarter);
+        List<LAPSDataCount> finsenseData = monthlyLAPSDataDAO.fetchFinsenseStatusCount(firstDayOfLastQuarter,lastDayOfLastQuarter);
 
-        List<LAPSDataCount> pfmData = monthlyLAPSDataDAO.fetchPfmStatusCount(firstDayOfQuarter, lastDayOfQuarter);
+        List<LAPSDataCount> pfmData = monthlyLAPSDataDAO.fetchPfmStatusCount(firstDayOfLastQuarter, lastDayOfLastQuarter);
 
         logger.info("Fetched {} rows for Finsense and {} rows for PFM data for reportType={}",
                 finsenseData.size(), pfmData.size(), getReportType());
 
-        CombinedLAPSData combinedData = new CombinedLAPSData(finsenseData, pfmData, firstDayOfQuarter, lastDayOfQuarter);
+        CombinedLAPSData combinedData = new CombinedLAPSData(finsenseData, pfmData, firstDayOfLastQuarter, lastDayOfLastQuarter);
 
         return combinedData;
     }

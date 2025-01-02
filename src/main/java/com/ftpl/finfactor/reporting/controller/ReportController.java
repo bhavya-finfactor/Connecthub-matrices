@@ -59,7 +59,7 @@ public class ReportController {
     private ReportingTask getTaskForReportType(ReportType reportType) throws Exception {
 
         switch (reportType) {
-            case MONTHLY_LAPS_DATA_REPORT:
+            case LAPS_DATA_REPORT:
                 return monthlyLAPSData;
 
             case MONTHLY_MD_DATA_REPORT:
