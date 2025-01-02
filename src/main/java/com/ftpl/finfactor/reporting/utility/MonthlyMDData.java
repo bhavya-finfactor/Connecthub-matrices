@@ -53,9 +53,6 @@ public class MonthlyMDData extends ReportingTask {
         LocalDate startDate = DateUtil.getStartDate();
         LocalDate endDate = DateUtil.getEndDate();
 
-//        LocalDate startDate = LocalDate.now().minusMonths(1).withDayOfMonth(1);
-//        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
-
         List<MDDataCount> mdData = monthlyMDDataDao.fetchMDData(startDate,endDate);
         logger.info("Fetched {} rows for MD Data for reportType={}", mdData.size(), getReportType());
 
