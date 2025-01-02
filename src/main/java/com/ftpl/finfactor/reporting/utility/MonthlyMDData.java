@@ -15,6 +15,7 @@ import org.thymeleaf.context.Context;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,29 +51,27 @@ public class MonthlyMDData extends ReportingTask {
     @Override
     public Serializable fetchData() {
 
-        LocalDate startDate = DateUtil.getStartDate();
-        LocalDate endDate = DateUtil.getEndDate();
+        LocalDate now = LocalDate.now().minusMonths(1);
+        LocalDate firstDayOfQuarter = now.with(now.getMonth().firstMonthOfQuarter()).with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate lastDayOfQuarter = now.with(TemporalAdjusters.lastDayOfMonth());
 
-        List<MDDataCount> mdData = monthlyMDDataDao.fetchMDData(startDate,endDate);
+        List<MDDataCount> mdData = monthlyMDDataDao.fetchMDData(firstDayOfQuarter,lastDayOfQuarter);
         logger.info("Fetched {} rows for MD Data for reportType={}", mdData.size(), getReportType());
 
-        return (Serializable) mdData;
+        GetMDData combinedData = new MonthlyMDData.GetMDData(mdData, firstDayOfQuarter, lastDayOfQuarter);
+
+        return  combinedData;
     }
 
     @Override
     public void triggerReport(Serializable data) throws Exception {
 
-        LocalDate startDate = DateUtil.getStartDate();
-        LocalDate endDate = DateUtil.getEndDate();
-
-        if (!(data instanceof List<?>)) {
+        if (!(data instanceof MonthlyMDData.GetMDData mdData)) {
             logger.warn("Invalid data type provided for report generation.");
             return;
         }
 
-        List<MDDataCount> mdDataCountList = (List<MDDataCount>) data;
-        
-        Map<String, Integer> mdDataCounts = computeCounts(mdDataCountList);
+        Map<String, Integer> mdDataCounts = computeCounts(mdData.mdDataCountList());
 
         // Calculate differences
         int readyCount = mdDataCounts.getOrDefault("COMPLETED", 0);
@@ -81,8 +80,8 @@ public class MonthlyMDData extends ReportingTask {
         int totalCount = readyCount + failedCount + pendingNullCount;
 
         Context emailData = new Context();
-        emailData.setVariable("startDate", startDate);
-        emailData.setVariable("endDate", endDate);
+        emailData.setVariable("startDate", mdData.startDate);
+        emailData.setVariable("endDate", mdData.endDate);
         emailData.setVariable("totalTransactions", totalCount);
         emailData.setVariable("successfulTransactions", readyCount);
         emailData.setVariable("technicalDeclines", failedCount);
@@ -93,7 +92,7 @@ public class MonthlyMDData extends ReportingTask {
 
         try {
             // send email
-            emailService.sendEmail(emailRecipients, "Monthly MD Data Report", formattedData);
+            emailService.sendEmail(emailRecipients, "Monthly FIP Data Report", formattedData);
             logger.info("Email successfully sent for  reportType: {}", getReportType());
         } catch (Exception e) {
             logger.error("Failed to send email. Error: {}", e.getMessage(), e);
@@ -106,6 +105,9 @@ public class MonthlyMDData extends ReportingTask {
             counts.merge(data.status(), Integer.parseInt(data.count()), Integer::sum);
         }
         return counts;
+    }
+
+    public record GetMDData(List<MDDataCount> mdDataCountList, LocalDate startDate, LocalDate endDate) implements Serializable {
     }
 
     @Override

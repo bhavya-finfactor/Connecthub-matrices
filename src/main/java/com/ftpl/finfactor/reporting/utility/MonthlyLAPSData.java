@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 import static com.ftpl.finfactor.reporting.model.ReportType.MONTHLY_LAPS_DATA_REPORT;
@@ -49,17 +50,18 @@ public class MonthlyLAPSData extends ReportingTask {
     @Override
     public Serializable fetchData() {
 
-        LocalDate startDate = DateUtil.getStartDate();
-        LocalDate endDate = DateUtil.getEndDate();
+        LocalDate now = LocalDate.now().minusMonths(1);
+        LocalDate firstDayOfQuarter = now.with(now.getMonth().firstMonthOfQuarter()).with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate lastDayOfQuarter = now.with(TemporalAdjusters.lastDayOfMonth());
 
-        List<LAPSDataCount> finsenseData = monthlyLAPSDataDAO.fetchFinsenseStatusCount(startDate,endDate);
+        List<LAPSDataCount> finsenseData = monthlyLAPSDataDAO.fetchFinsenseStatusCount(firstDayOfQuarter,lastDayOfQuarter);
 
-        List<LAPSDataCount> pfmData = monthlyLAPSDataDAO.fetchPfmStatusCount(startDate, endDate);
+        List<LAPSDataCount> pfmData = monthlyLAPSDataDAO.fetchPfmStatusCount(firstDayOfQuarter, lastDayOfQuarter);
 
         logger.info("Fetched {} rows for Finsense and {} rows for PFM data for reportType={}",
                 finsenseData.size(), pfmData.size(), getReportType());
 
-        CombinedLAPSData combinedData = new CombinedLAPSData(finsenseData, pfmData, startDate, endDate);
+        CombinedLAPSData combinedData = new CombinedLAPSData(finsenseData, pfmData, firstDayOfQuarter, lastDayOfQuarter);
 
         return combinedData;
     }
