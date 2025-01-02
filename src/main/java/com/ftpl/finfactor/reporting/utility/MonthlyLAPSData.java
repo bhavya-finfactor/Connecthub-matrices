@@ -49,8 +49,8 @@ public class MonthlyLAPSData extends ReportingTask {
     @Override
     public Serializable fetchData() {
 
-        LocalDate startDate = LocalDate.now().minusMonths(1).withDayOfMonth(1);
-        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+        LocalDate startDate = DateUtil.getStartDate();
+        LocalDate endDate = DateUtil.getEndDate();
 
         List<LAPSDataCount> finsenseData = monthlyLAPSDataDAO.fetchFinsenseStatusCount(startDate,endDate);
 

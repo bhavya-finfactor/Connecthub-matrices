@@ -49,8 +49,12 @@ public class MonthlyMDData extends ReportingTask {
 
     @Override
     public Serializable fetchData() {
-        LocalDate startDate = LocalDate.now().minusMonths(1).withDayOfMonth(1);
-        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+        LocalDate startDate = DateUtil.getStartDate();
+        LocalDate endDate = DateUtil.getEndDate();
+
+//        LocalDate startDate = LocalDate.now().minusMonths(1).withDayOfMonth(1);
+//        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
 
         List<MDDataCount> mdData = monthlyMDDataDao.fetchMDData(startDate,endDate);
         logger.info("Fetched {} rows for MD Data for reportType={}", mdData.size(), getReportType());
@@ -61,8 +65,8 @@ public class MonthlyMDData extends ReportingTask {
     @Override
     public void triggerReport(Serializable data) throws Exception {
 
-        LocalDate startDate = LocalDate.now().minusMonths(1).withDayOfMonth(1);
-        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+        LocalDate startDate = DateUtil.getStartDate();
+        LocalDate endDate = DateUtil.getEndDate();
 
         if (!(data instanceof List<?>)) {
             logger.warn("Invalid data type provided for report generation.");

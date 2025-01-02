@@ -24,12 +24,12 @@ public class DataScheduler {
         monthlyLAPSData.run();
     }
 
-    @Scheduled(cron = "#{@monthlyMDData.cronSchedule()}", zone = "Asia/Kolkata")
+    @Scheduled(cron = "#{@monthlyMDData.cronSchedule()}", zone = "${cron.timezone}")
     public void executeMonthlyMDData(){
         monthlyMDData.run();
     }
 
-    @Scheduled(cron = "#{@weeklyDFSData.cronSchedule()}", zone = "Asia/Kolkata")
+    @Scheduled(cron = "#{@weeklyDFSData.cronSchedule()}", zone = "${cron.timezone}")
     public void executeWeeklyDFSData(){
         weeklyDFSData.run();
     }
