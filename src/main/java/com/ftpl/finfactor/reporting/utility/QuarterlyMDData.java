@@ -23,9 +23,9 @@ import java.util.Map;
 import static com.ftpl.finfactor.reporting.model.ReportType.MD_DATA_REPORT;
 
 @Component
-public class QuartelyMDData extends ReportingTask {
+public class QuarterlyMDData extends ReportingTask {
 
-    private static final Logger logger = LoggerFactory.getLogger(QuartelyMDData.class);
+    private static final Logger logger = LoggerFactory.getLogger(QuarterlyMDData.class);
 
     @Autowired
     private MDDataReportDAO mdDataReportDAO;
@@ -58,7 +58,7 @@ public class QuartelyMDData extends ReportingTask {
         List<MDDataCount> mdData = mdDataReportDAO.fetchMDData(firstDayOfQuarter,lastDayOfQuarter);
         logger.info("Fetched {} rows for MD Data for reportType={}", mdData.size(), getReportType());
 
-        GetMDData combinedData = new QuartelyMDData.GetMDData(mdData, firstDayOfQuarter, lastDayOfQuarter);
+        GetMDData combinedData = new QuarterlyMDData.GetMDData(mdData, firstDayOfQuarter, lastDayOfQuarter);
 
         return  combinedData;
     }
@@ -66,7 +66,7 @@ public class QuartelyMDData extends ReportingTask {
     @Override
     public void triggerReport(Serializable data) throws Exception {
 
-        if (!(data instanceof QuartelyMDData.GetMDData mdData)) {
+        if (!(data instanceof QuarterlyMDData.GetMDData mdData)) {
             logger.warn("Invalid data type provided for report generation.");
             return;
         }

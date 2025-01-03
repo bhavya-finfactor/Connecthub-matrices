@@ -1,7 +1,7 @@
 package com.ftpl.finfactor.reporting.scheduler;
 
-import com.ftpl.finfactor.reporting.utility.QuartelyMDData;
-import com.ftpl.finfactor.reporting.utility.QuartleyLAPSData;
+import com.ftpl.finfactor.reporting.utility.QuarterlyLAPSData;
+import com.ftpl.finfactor.reporting.utility.QuarterlyMDData;
 import com.ftpl.finfactor.reporting.utility.WeeklyDFSData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -11,22 +11,22 @@ import org.springframework.stereotype.Component;
 public class DataScheduler {
 
     @Autowired
-    private QuartleyLAPSData quartleyLAPSData;
+    private QuarterlyLAPSData quarterlyLAPSData;
 
     @Autowired
-    private QuartelyMDData quartelyMDData;
+    private QuarterlyMDData quarterlyMDData;
 
     @Autowired
     private WeeklyDFSData weeklyDFSData;
 
-    @Scheduled(cron = "#{@quartleyLAPSData.cronSchedule()}", zone = "Asia/Kolkata")
+    @Scheduled(cron = "#{@quarterlyLAPSData.cronSchedule()}", zone = "Asia/Kolkata")
     public void executeMonthlyLAPSData(){
-        quartleyLAPSData.run();
+        quarterlyLAPSData.run();
     }
 
-    @Scheduled(cron = "#{@quartelyMDData.cronSchedule()}", zone = "${cron.timezone}")
+    @Scheduled(cron = "#{@quarterlyMDData.cronSchedule()}", zone = "${cron.timezone}")
     public void executeMonthlyMDData(){
-        quartelyMDData.run();
+        quarterlyMDData.run();
     }
 
     @Scheduled(cron = "#{@weeklyDFSData.cronSchedule()}", zone = "${cron.timezone}")

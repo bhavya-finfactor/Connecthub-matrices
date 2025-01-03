@@ -2,8 +2,8 @@ package com.ftpl.finfactor.reporting.controller;
 
 import com.ftpl.finfactor.reporting.model.ReportType;
 import com.ftpl.finfactor.reporting.model.ReportingTask;
-import com.ftpl.finfactor.reporting.utility.QuartelyMDData;
-import com.ftpl.finfactor.reporting.utility.QuartleyLAPSData;
+import com.ftpl.finfactor.reporting.utility.QuarterlyLAPSData;
+import com.ftpl.finfactor.reporting.utility.QuarterlyMDData;
 import com.ftpl.finfactor.reporting.utility.WeeklyDFSData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +23,10 @@ public class ReportController {
     private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
 
     @Autowired
-    QuartleyLAPSData quartleyLAPSData;
+    QuarterlyLAPSData quarterlyLAPSData;
 
     @Autowired
-    QuartelyMDData quartelyMDData;
+    QuarterlyMDData quarterlyMDData;
 
     @Autowired
     WeeklyDFSData weeklyDFSData;
@@ -60,10 +60,10 @@ public class ReportController {
 
         switch (reportType) {
             case LAPS_DATA_REPORT:
-                return quartleyLAPSData;
+                return quarterlyLAPSData;
 
             case MD_DATA_REPORT:
-                return quartelyMDData;
+                return quarterlyMDData;
 
             case WEEKLY_DFS_REPORT:
                 return weeklyDFSData;

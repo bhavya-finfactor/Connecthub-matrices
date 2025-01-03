@@ -20,9 +20,9 @@ import java.util.*;
 import static com.ftpl.finfactor.reporting.model.ReportType.LAPS_DATA_REPORT;
 
 @Component
-public class QuartleyLAPSData extends ReportingTask {
+public class QuarterlyLAPSData extends ReportingTask {
 
-    private static final Logger logger = LoggerFactory.getLogger(QuartleyLAPSData.class);
+    private static final Logger logger = LoggerFactory.getLogger(QuarterlyLAPSData.class);
 
     @Autowired
     private LAPSDataDAO lapsDataDAO;
