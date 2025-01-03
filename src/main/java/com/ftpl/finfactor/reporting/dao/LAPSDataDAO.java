@@ -14,9 +14,9 @@ import java.time.LocalDate;
 import java.util.*;
 
 @Repository
-public class MonthlyLAPSDataDAO {
+public class LAPSDataDAO {
 
-    private static final Logger logger = LoggerFactory.getLogger(MonthlyLAPSDataDAO.class);
+    private static final Logger logger = LoggerFactory.getLogger(LAPSDataDAO.class);
 
     @Autowired
     private LAPSFinsenseDAOManager fsdaoManager;

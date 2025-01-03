@@ -1,6 +1,6 @@
 package com.ftpl.finfactor.reporting.dao;
 
-import com.ftpl.finfactor.reporting.dao.manager.MonthlyMDDataDAOManager;
+import com.ftpl.finfactor.reporting.dao.manager.MDDataDAOManager;
 import com.ftpl.finfactor.reporting.model.MDDataCount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +18,7 @@ public class MDDataReportDAO {
     private static final Logger logger = LoggerFactory.getLogger(MDDataReportDAO.class);
 
     @Autowired
-    private MonthlyMDDataDAOManager mdDataDaoManager;
+    private MDDataDAOManager mdDataDaoManager;
 
     public List<MDDataCount> fetchMDData(LocalDate startDate, LocalDate endDate){
         ResultSet resultSet = null;

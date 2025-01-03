@@ -20,15 +20,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.ftpl.finfactor.reporting.model.ReportType.MONTHLY_MD_DATA_REPORT;
+import static com.ftpl.finfactor.reporting.model.ReportType.MD_DATA_REPORT;
 
 @Component
-public class MonthlyMDData extends ReportingTask {
+public class QuartelyMDData extends ReportingTask {
 
-    private static final Logger logger = LoggerFactory.getLogger(MonthlyMDData.class);
+    private static final Logger logger = LoggerFactory.getLogger(QuartelyMDData.class);
 
     @Autowired
-    private MDDataReportDAO monthlyMDDataDao;
+    private MDDataReportDAO mdDataReportDAO;
 
     @Autowired
     private ThymeleafTemplateConfig thymeleafTemplateConfig;
@@ -45,7 +45,7 @@ public class MonthlyMDData extends ReportingTask {
 
     @Override
     public ReportType getReportType() {
-        return MONTHLY_MD_DATA_REPORT;
+        return MD_DATA_REPORT;
     }
 
     @Override
@@ -55,10 +55,10 @@ public class MonthlyMDData extends ReportingTask {
         LocalDate firstDayOfQuarter = now.with(now.getMonth().firstMonthOfQuarter()).with(TemporalAdjusters.firstDayOfMonth());
         LocalDate lastDayOfQuarter = now.with(TemporalAdjusters.lastDayOfMonth());
 
-        List<MDDataCount> mdData = monthlyMDDataDao.fetchMDData(firstDayOfQuarter,lastDayOfQuarter);
+        List<MDDataCount> mdData = mdDataReportDAO.fetchMDData(firstDayOfQuarter,lastDayOfQuarter);
         logger.info("Fetched {} rows for MD Data for reportType={}", mdData.size(), getReportType());
 
-        GetMDData combinedData = new MonthlyMDData.GetMDData(mdData, firstDayOfQuarter, lastDayOfQuarter);
+        GetMDData combinedData = new QuartelyMDData.GetMDData(mdData, firstDayOfQuarter, lastDayOfQuarter);
 
         return  combinedData;
     }
@@ -66,7 +66,7 @@ public class MonthlyMDData extends ReportingTask {
     @Override
     public void triggerReport(Serializable data) throws Exception {
 
-        if (!(data instanceof MonthlyMDData.GetMDData mdData)) {
+        if (!(data instanceof QuartelyMDData.GetMDData mdData)) {
             logger.warn("Invalid data type provided for report generation.");
             return;
         }

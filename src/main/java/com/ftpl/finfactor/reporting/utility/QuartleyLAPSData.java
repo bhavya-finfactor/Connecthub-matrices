@@ -5,7 +5,7 @@ import com.ftpl.finfactor.reporting.model.ReportType;
 import com.ftpl.finfactor.reporting.model.ReportingTask;
 import com.ftpl.finfactor.reporting.service.EmailService;
 import com.ftpl.finfactor.reporting.configuration.ThymeleafTemplateConfig;
-import com.ftpl.finfactor.reporting.dao.MonthlyLAPSDataDAO;
+import com.ftpl.finfactor.reporting.dao.LAPSDataDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +20,12 @@ import java.util.*;
 import static com.ftpl.finfactor.reporting.model.ReportType.LAPS_DATA_REPORT;
 
 @Component
-public class MonthlyLAPSData extends ReportingTask {
+public class QuartleyLAPSData extends ReportingTask {
 
-    private static final Logger logger = LoggerFactory.getLogger(MonthlyLAPSData.class);
+    private static final Logger logger = LoggerFactory.getLogger(QuartleyLAPSData.class);
 
     @Autowired
-    private MonthlyLAPSDataDAO monthlyLAPSDataDAO;
+    private LAPSDataDAO lapsDataDAO;
 
     @Autowired
     private ThymeleafTemplateConfig thymeleafTemplateConfig;
@@ -54,9 +54,9 @@ public class MonthlyLAPSData extends ReportingTask {
         LocalDate firstDayOfLastQuarter = lastMonthDate.with(lastMonthDate.getMonth().firstMonthOfQuarter()).with(TemporalAdjusters.firstDayOfMonth());
         LocalDate lastDayOfLastQuarter = lastMonthDate.with(TemporalAdjusters.lastDayOfMonth());
 
-        List<LAPSDataCount> finsenseData = monthlyLAPSDataDAO.fetchFinsenseStatusCount(firstDayOfLastQuarter,lastDayOfLastQuarter);
+        List<LAPSDataCount> finsenseData = lapsDataDAO.fetchFinsenseStatusCount(firstDayOfLastQuarter,lastDayOfLastQuarter);
 
-        List<LAPSDataCount> pfmData = monthlyLAPSDataDAO.fetchPfmStatusCount(firstDayOfLastQuarter, lastDayOfLastQuarter);
+        List<LAPSDataCount> pfmData = lapsDataDAO.fetchPfmStatusCount(firstDayOfLastQuarter, lastDayOfLastQuarter);
 
         logger.info("Fetched {} rows for Finsense and {} rows for PFM data for reportType={}",
                 finsenseData.size(), pfmData.size(), getReportType());

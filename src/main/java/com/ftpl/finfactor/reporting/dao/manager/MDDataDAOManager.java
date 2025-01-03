@@ -8,7 +8,7 @@ import javax.sql.DataSource;
 import java.sql.*;
 
 @Component
-public class MonthlyMDDataDAOManager implements DAOManager{
+public class MDDataDAOManager implements DAOManager{
 
     @Autowired
     @Qualifier("chDataSource")
