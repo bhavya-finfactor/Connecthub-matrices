@@ -39,7 +39,7 @@ public class QuarterlyMDData extends ReportingTask {
     @Value("${report.md.email.recipients}")
     private List<String> emailRecipients;
 
-    @Value("${cron.monthly.md.data}")
+    @Value("${cron.md.data}")
     private String cronExpression;
 
 
@@ -51,14 +51,14 @@ public class QuarterlyMDData extends ReportingTask {
     @Override
     public Serializable fetchData() {
 
-        LocalDate now = LocalDate.now().minusMonths(1);
-        LocalDate firstDayOfQuarter = now.with(now.getMonth().firstMonthOfQuarter()).with(TemporalAdjusters.firstDayOfMonth());
-        LocalDate lastDayOfQuarter = now.with(TemporalAdjusters.lastDayOfMonth());
+        LocalDate lastMonthDate = LocalDate.now().minusMonths(1);
+        LocalDate firstDayOfQuarter = lastMonthDate.with(lastMonthDate.getMonth().firstMonthOfQuarter()).with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate lastDayOfLastMonth = lastMonthDate.with(TemporalAdjusters.lastDayOfMonth());
 
-        List<MDDataCount> mdData = mdDataReportDAO.fetchMDData(firstDayOfQuarter,lastDayOfQuarter);
+        List<MDDataCount> mdData = mdDataReportDAO.fetchMDData(firstDayOfQuarter,lastDayOfLastMonth);
         logger.info("Fetched {} rows for MD Data for reportType={}", mdData.size(), getReportType());
 
-        GetMDData combinedData = new QuarterlyMDData.GetMDData(mdData, firstDayOfQuarter, lastDayOfQuarter);
+        GetMDData combinedData = new QuarterlyMDData.GetMDData(mdData, firstDayOfQuarter, lastDayOfLastMonth);
 
         return  combinedData;
     }
@@ -90,13 +90,9 @@ public class QuarterlyMDData extends ReportingTask {
         // Load the template and format the data
         String formattedData = thymeleafTemplateConfig.springTemplateEngine().process("mdDataTemplate.html",emailData);
 
-        try {
             // send email
-            emailService.sendEmail(emailRecipients, "Monthly FIP Data Report", formattedData);
+            emailService.sendEmail(emailRecipients, "FIP Data Report", formattedData);
             logger.info("Email successfully sent for  reportType: {}", getReportType());
-        } catch (Exception e) {
-            logger.error("Failed to send email. Error: {}", e.getMessage(), e);
-        }
     }
 
     private Map<String, Integer> computeCounts(List<MDDataCount> dataList) {

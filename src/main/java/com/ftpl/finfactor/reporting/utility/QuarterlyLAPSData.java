@@ -33,7 +33,7 @@ public class QuarterlyLAPSData extends ReportingTask {
     @Autowired
     private EmailService emailService;
 
-    @Value("${cron.monthly.laps.data}")
+    @Value("${cron.laps.data}")
     private String cronExpression;
 
 
@@ -51,17 +51,17 @@ public class QuarterlyLAPSData extends ReportingTask {
     public Serializable fetchData() {
 
         LocalDate lastMonthDate = LocalDate.now().minusMonths(1);
-        LocalDate firstDayOfLastQuarter = lastMonthDate.with(lastMonthDate.getMonth().firstMonthOfQuarter()).with(TemporalAdjusters.firstDayOfMonth());
-        LocalDate lastDayOfLastQuarter = lastMonthDate.with(TemporalAdjusters.lastDayOfMonth());
+        LocalDate firstDayOfQuarter = lastMonthDate.with(lastMonthDate.getMonth().firstMonthOfQuarter()).with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate lastDayOfLastMonth = lastMonthDate.with(TemporalAdjusters.lastDayOfMonth());
 
-        List<LAPSDataCount> finsenseData = lapsDataDAO.fetchFinsenseStatusCount(firstDayOfLastQuarter,lastDayOfLastQuarter);
+        List<LAPSDataCount> finsenseData = lapsDataDAO.fetchFinsenseStatusCount(firstDayOfQuarter,lastDayOfLastMonth);
 
-        List<LAPSDataCount> pfmData = lapsDataDAO.fetchPfmStatusCount(firstDayOfLastQuarter, lastDayOfLastQuarter);
+        List<LAPSDataCount> pfmData = lapsDataDAO.fetchPfmStatusCount(firstDayOfQuarter, lastDayOfLastMonth);
 
         logger.info("Fetched {} rows for Finsense and {} rows for PFM data for reportType={}",
                 finsenseData.size(), pfmData.size(), getReportType());
 
-        CombinedLAPSData combinedData = new CombinedLAPSData(finsenseData, pfmData, firstDayOfLastQuarter, lastDayOfLastQuarter);
+        CombinedLAPSData combinedData = new CombinedLAPSData(finsenseData, pfmData, firstDayOfQuarter, lastDayOfLastMonth);
 
         return combinedData;
     }
@@ -96,13 +96,9 @@ public class QuarterlyLAPSData extends ReportingTask {
         // Load the template and format the data
         String formattedData = thymeleafTemplateConfig.springTemplateEngine().process("lapsDataTemplate.html", emailData);
 
-        try {
             // send email
-            emailService.sendEmail(emailRecipients, "Monthly LAPS Data Report", formattedData);
+            emailService.sendEmail(emailRecipients, "LAPS Data Report", formattedData);
             logger.info("Email successfully sent for  reportType: {}", getReportType());
-        } catch (Exception e) {
-            logger.error("Failed to send email. Error: {}", e.getMessage(), e);
-        }
     }
 
     public Map<String, Integer> computeCounts(List<LAPSDataCount> dataList) {

@@ -20,12 +20,12 @@ public class DataScheduler {
     private WeeklyDFSData weeklyDFSData;
 
     @Scheduled(cron = "#{@quarterlyLAPSData.cronSchedule()}", zone = "Asia/Kolkata")
-    public void executeMonthlyLAPSData(){
+    public void executeLAPSData(){
         quarterlyLAPSData.run();
     }
 
     @Scheduled(cron = "#{@quarterlyMDData.cronSchedule()}", zone = "${cron.timezone}")
-    public void executeMonthlyMDData(){
+    public void executeMDData(){
         quarterlyMDData.run();
     }
 
